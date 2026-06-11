@@ -194,9 +194,13 @@ export default function CasePage() {
         className="group relative overflow-hidden cursor-pointer p-6 bg-[var(--color-paper)] border border-[var(--color-gold-dim)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.6)] hover:-translate-y-1 transition transform h-full flex flex-col"
         style={{ borderColor: "rgba(184,146,58,0.18)" }}
       >
-        <h3 className="font-serif text-xl italic text-[var(--color-cream)] mb-2">SUSPECTS</h3>
-        <p className="font-mono text-[0.85rem] text-[var(--color-parchment)] mb-4">Interrogate the individuals connected to Samuel Alexander.</p>
-        <div className="mt-auto font-mono text-[0.9rem] text-[var(--color-gold)]">4 persons</div>
+        <h3 className="font-serif text-xl italic text-[var(--color-cream)] mb-2 transition-colors duration-300 group-hover:text-[var(--color-gold)]">SUSPECTS</h3>
+        <p className="font-mono text-[0.85rem] text-[var(--color-parchment)] mb-4">Question those connected to the victim.</p>
+        <p className="font-mono text-[0.85rem] text-[var(--color-parchment)] mb-4">Their statements contain inconsistencies. Click to review.</p>
+        <div className="mt-auto">
+          <div className="font-mono text-[0.9rem] text-[var(--color-gold)]">4 persons</div>
+          <div className="mt-4 text-[0.8rem] text-[var(--color-gold)] opacity-0 transition-opacity duration-300 group-hover:opacity-100">Click to review →</div>
+        </div>
       </button>
     );
   }
@@ -209,9 +213,11 @@ export default function CasePage() {
         className="group relative overflow-hidden cursor-pointer p-6 bg-[var(--color-paper)] border border-[var(--color-gold-dim)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.6)] hover:-translate-y-1 transition transform h-full flex flex-col"
         style={{ borderColor: "rgba(184,146,58,0.18)" }}
       >
-        <h3 className="font-serif text-xl italic text-[var(--color-cream)] mb-2">EVIDENCE</h3>
+        <h3 className="font-serif text-xl italic text-[var(--color-cream)] mb-2 transition-colors duration-300 group-hover:text-[var(--color-gold)]">EVIDENCE</h3>
         <p className="font-mono text-[0.85rem] text-[var(--color-parchment)] mb-4">Review recovered evidence and investigative materials.</p>
+        <p className="font-mono text-[0.85rem] text-[var(--color-parchment)] mb-4">Click to inspect several items recovered from Ethan Graves files.</p>
         <div className="mt-auto font-mono text-[0.9rem] text-[var(--color-gold)]">{reviewedEvidenceIds.length} / {evidenceItems.length} reviewed</div>
+        <div className="mt-4 text-[0.8rem] text-[var(--color-gold)] opacity-0 transition-opacity duration-300 group-hover:opacity-100">Click to inspect →</div>
       </button>
     );
   }
@@ -225,9 +231,11 @@ export default function CasePage() {
         className="group relative overflow-hidden cursor-pointer p-6 bg-[var(--color-paper)] border border-[var(--color-gold-dim)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.6)] hover:-translate-y-1 transition transform h-full flex flex-col"
         style={{ borderColor: "rgba(184,146,58,0.18)" }}
       >
-        <h3 className="font-serif text-xl italic text-[var(--color-cream)] mb-2">TIMELINE</h3>
+        <h3 className="font-serif text-xl italic text-[var(--color-cream)] mb-2 transition-colors duration-300 group-hover:text-[var(--color-gold)]">TIMELINE</h3>
         <p className="font-mono text-[0.85rem] text-[var(--color-parchment)] mb-4">Reconstruct the events of September 14, 1989.</p>
+        <p className="font-mono text-[0.85rem] text-[var(--color-parchment)] mb-4">Piece together what happened on the night Samuel King died.</p>
         <div className="mt-auto font-mono text-[0.9rem] text-[var(--color-gold)]">{reviewedTimelineIds.length} / {timelineEvents.length} events reviewed</div>
+        <div className="mt-4 text-[0.8rem] text-[var(--color-gold)] opacity-0 transition-opacity duration-300 group-hover:opacity-100">Click to reconstruct →</div>
       </button>
     );
   }
@@ -247,12 +255,15 @@ export default function CasePage() {
         className={"group relative overflow-hidden cursor-pointer p-6 bg-[var(--color-paper)] border border-[var(--color-gold-dim)] transition transform h-full flex flex-col"}
         style={{ borderColor: "rgba(184,146,58,0.18)" }}
       >
-        <h3 className="font-serif text-xl italic text-[var(--color-cream)] mb-2">MAKE ACCUSATION</h3>
+        <h3 className="font-serif text-xl italic text-[var(--color-cream)] mb-2 transition-colors duration-300 group-hover:text-[var(--color-gold)]">MAKE ACCUSATION</h3>
         <p className="font-mono text-[0.85rem] text-[var(--color-parchment)] mb-4">Finalize your suspicion and press to accuse.</p>
+        <p className="font-mono text-[0.85rem] text-[var(--color-parchment)] mb-4">The truth remains hidden. Review the evidence, examine the suspects, and determine who is responsible.</p>
         <div className={"mt-auto font-mono text-[0.9rem] " + (accusationReady ? "text-[var(--color-gold)]" : "text-[var(--color-parchment)]")}>
           {accusationReady ? "Ready" : "Locked"}
         </div>
+        <div className="mt-4 text-[0.8rem] text-[var(--color-gold)] opacity-0 transition-opacity duration-300 group-hover:opacity-100">{accusationReady ? "Click to accuse →" : "Investigation incomplete"}</div>
       </button>
+
     );
   }
   return (
