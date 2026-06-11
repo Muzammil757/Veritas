@@ -23,6 +23,12 @@ export default function CasePage() {
   const [accusationOpen, setAccusationOpen] = useState(false);
   const [reviewedSuspectIds, setReviewedSuspectIds] = useState<number[]>([]);
 
+  const [accusationFormOpen, setAccusationFormOpen] = useState(false);
+  const [selectedAccusedSuspectId, setSelectedAccusedSuspectId] = useState<number | null>(null);
+  const [accusationReasoning, setAccusationReasoning] = useState("");
+  const [accusationResultOpen, setAccusationResultOpen] = useState(false);
+  const [accusationResultCorrect, setAccusationResultCorrect] = useState(false);
+
   type Suspect = {
     id: number;
     name: string;
@@ -185,11 +191,11 @@ export default function CasePage() {
       <button
         onClick={() => setSuspectsOpen(true)}
         aria-label="Open Suspects"
-        className="group relative overflow-hidden cursor-pointer p-6 bg-[var(--color-paper)] border border-[var(--color-gold-dim)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.6)] hover:-translate-y-1 transition transform"
+        className="group relative overflow-hidden cursor-pointer p-6 bg-[var(--color-paper)] border border-[var(--color-gold-dim)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.6)] hover:-translate-y-1 transition transform h-full flex flex-col"
         style={{ borderColor: "rgba(184,146,58,0.18)" }}
       >
         <h3 className="font-serif text-xl italic text-[var(--color-cream)] mb-2">SUSPECTS</h3>
-        <p className="font-mono text-[0.85rem] text-[var(--color-parchment)] mb-4">Interview those connected to Samuel's death.</p>
+        <p className="font-mono text-[0.85rem] text-[var(--color-parchment)] mb-4">Interrogate the individuals connected to Samuel Alexander.</p>
         <div className="mt-auto font-mono text-[0.9rem] text-[var(--color-gold)]">4 persons</div>
       </button>
     );
@@ -200,11 +206,11 @@ export default function CasePage() {
         type="button"
         onClick={() => setEvidenceOpen(true)}
         aria-label="Open Evidence"
-        className="group relative overflow-hidden cursor-pointer p-6 bg-[var(--color-paper)] border border-[var(--color-gold-dim)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.6)] hover:-translate-y-1 transition transform"
+        className="group relative overflow-hidden cursor-pointer p-6 bg-[var(--color-paper)] border border-[var(--color-gold-dim)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.6)] hover:-translate-y-1 transition transform h-full flex flex-col"
         style={{ borderColor: "rgba(184,146,58,0.18)" }}
       >
         <h3 className="font-serif text-xl italic text-[var(--color-cream)] mb-2">EVIDENCE</h3>
-        <p className="font-mono text-[0.85rem] text-[var(--color-parchment)] mb-4">Review collected evidence and investigative materials.</p>
+        <p className="font-mono text-[0.85rem] text-[var(--color-parchment)] mb-4">Review recovered evidence and investigative materials.</p>
         <div className="mt-auto font-mono text-[0.9rem] text-[var(--color-gold)]">{reviewedEvidenceIds.length} / {evidenceItems.length} reviewed</div>
       </button>
     );
@@ -216,11 +222,11 @@ export default function CasePage() {
         type="button"
         onClick={() => setTimelineOpen(true)}
         aria-label="Open Timeline"
-        className="group relative overflow-hidden cursor-pointer p-6 bg-[var(--color-paper)] border border-[var(--color-gold-dim)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.6)] hover:-translate-y-1 transition transform"
+        className="group relative overflow-hidden cursor-pointer p-6 bg-[var(--color-paper)] border border-[var(--color-gold-dim)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.6)] hover:-translate-y-1 transition transform h-full flex flex-col"
         style={{ borderColor: "rgba(184,146,58,0.18)" }}
       >
         <h3 className="font-serif text-xl italic text-[var(--color-cream)] mb-2">TIMELINE</h3>
-        <p className="font-mono text-[0.85rem] text-[var(--color-parchment)] mb-4">Reconstruct the events surrounding the night of the murder.</p>
+        <p className="font-mono text-[0.85rem] text-[var(--color-parchment)] mb-4">Reconstruct the events of September 14, 1989.</p>
         <div className="mt-auto font-mono text-[0.9rem] text-[var(--color-gold)]">{reviewedTimelineIds.length} / {timelineEvents.length} events reviewed</div>
       </button>
     );
@@ -230,15 +236,21 @@ export default function CasePage() {
     return (
       <button
         type="button"
-        onClick={() => setAccusationOpen(true)}
-        aria-label="Open Accusation"
-        className="group relative overflow-hidden cursor-pointer p-6 bg-[var(--color-paper)] border border-[var(--color-gold-dim)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.6)] hover:-translate-y-1 transition transform"
+        onClick={() => {
+          if (accusationReady) {
+            setAccusationFormOpen(true);
+          } else {
+            setAccusationOpen(true);
+          }
+        }}
+        aria-label="Make Accusation"
+        className={"group relative overflow-hidden cursor-pointer p-6 bg-[var(--color-paper)] border border-[var(--color-gold-dim)] transition transform h-full flex flex-col"}
         style={{ borderColor: "rgba(184,146,58,0.18)" }}
       >
-        <h3 className="font-serif text-xl italic text-[var(--color-cream)] mb-2">ACCUSATION</h3>
-        <p className="font-mono text-[0.85rem] text-[var(--color-parchment)] mb-4">A place to lay out leads and theories.</p>
+        <h3 className="font-serif text-xl italic text-[var(--color-cream)] mb-2">MAKE ACCUSATION</h3>
+        <p className="font-mono text-[0.85rem] text-[var(--color-parchment)] mb-4">Finalize your suspicion and press to accuse.</p>
         <div className={"mt-auto font-mono text-[0.9rem] " + (accusationReady ? "text-[var(--color-gold)]" : "text-[var(--color-parchment)]")}>
-          {accusationReady ? "Ready to Accuse" : "Locked"}
+          {accusationReady ? "Ready" : "Locked"}
         </div>
       </button>
     );
@@ -315,31 +327,23 @@ export default function CasePage() {
 
               {/* Investigation workspace panels */}
               <section className="mb-12">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="h-56">
                     <EvidenceLauncher />
-
-                  {/* Suspects panel (opens InvestigationPanel) */}
-                  <SuspectsLauncher />
-
-                  {/* Timeline panel (placeholder) */}
+                  </div>
+                  <div className="h-56">
+                    <SuspectsLauncher />
+                  </div>
+                  <div className="h-56">
                     <TimelineLauncher />
-
-                  {/* Accusation Board panel (placeholder) */}
+                  </div>
+                  <div className="h-56">
                     <AccusationLauncher />
+                  </div>
                 </div>
               </section>
 
-            {/* Bottom CTA */}
-            <div className="text-center mb-20">
-              <button className="group relative inline-flex items-center gap-4 cursor-pointer" aria-label="Begin Investigation">
-                <span className="absolute inset-0 border border-[var(--color-gold-dim)] opacity-40 transition-opacity duration-500 group-hover:opacity-80" style={{ transform: "translate(4px, 4px)" }} />
-                <span className="relative z-10 flex items-center gap-4 px-10 py-4 bg-transparent border border-[var(--color-gold)] transition-all duration-300 group-hover:bg-[var(--color-gold)] group-hover:bg-opacity-10" style={{ borderColor: "var(--color-gold)" }}>
-                  <span className="w-6 h-px bg-[var(--color-gold)] transition-all duration-300 group-hover:w-8" />
-                  <span className="font-display text-xl tracking-[0.35em] text-[var(--color-gold)] transition-colors duration-300">BEGIN INVESTIGATION</span>
-                  <span className="w-6 h-px bg-[var(--color-gold)] transition-all duration-300 group-hover:w-8" />
-                </span>
-              </button>
-            </div>
+            {/* Bottom CTA removed per redesign (Begin Investigation) */}
 
             {/* Suspects Investigation Panel */}
             <InvestigationPanel
@@ -398,7 +402,7 @@ export default function CasePage() {
                         onClick={() => setInterviewNote("Interview System Coming Soon")}
                         className="px-4 py-2 bg-[var(--color-gold)] text-[var(--color-ink)] font-mono tracking-[0.15em]"
                       >
-                        INTERVIEW
+                        INTERROGATE
                       </button>
                       {interviewNote && (
                         <div className="mt-3 p-3 bg-[var(--color-surface)] text-[var(--color-parchment)]">{interviewNote}</div>
@@ -505,53 +509,109 @@ export default function CasePage() {
             <InvestigationPanel
               open={accusationOpen}
               onClose={() => setAccusationOpen(false)}
-              title="ACCUSATION"
-              subtitle="Assemble your case before the final charge."
+              title="ACCUSATION LOCKED"
+              subtitle=""
+            >
+              <div>
+                <p className="font-mono text-[0.9rem] text-[var(--color-parchment)]">Review all evidence, suspects, and timeline events before making an accusation.</p>
+              </div>
+            </InvestigationPanel>
+
+            <InvestigationPanel
+              open={accusationFormOpen}
+              onClose={() => setAccusationFormOpen(false)}
+              title="FINAL ACCUSATION"
+              subtitle=""
             >
               <div className="space-y-5">
-                <div className={"p-5 rounded-sm border " + (accusationReady ? "border-[var(--color-gold)] bg-[rgba(184,146,58,0.12)]" : "border-[rgba(184,146,58,0.12)] bg-[rgba(10,8,6,0.7)]")}>
-                  {accusationReady ? (
-                    <p className="font-serif text-lg text-[var(--color-cream)]">Ready to Accuse</p>
-                  ) : (
-                    <>
-                      <p className="font-serif text-lg text-[var(--color-cream)] mb-3">Insufficient information.</p>
-                      <p className="font-mono text-[0.85rem] text-[var(--color-parchment)] leading-7">
-                        Review evidence, suspects, and timeline events before making an accusation. <span className="text-[var(--color-gold)]">🔒</span>
-                      </p>
-                    </>
-                  )}
+                <p className="font-mono text-[0.9rem] text-[var(--color-parchment)]">Select the person responsible for Samuel Alexander's death.</p>
+
+                <div className="space-y-3">
+                  {suspects.map((s) => (
+                    <label key={s.id} className="flex items-center gap-3 p-3 bg-[rgba(10,8,6,0.7)] border border-[rgba(184,146,58,0.06)] rounded-sm cursor-pointer">
+                      <input
+                        type="radio"
+                        name="accused"
+                        value={s.id}
+                        checked={selectedAccusedSuspectId === s.id}
+                        onChange={() => setSelectedAccusedSuspectId(s.id)}
+                        className="w-4 h-4"
+                      />
+                      <span className="font-display text-[var(--color-cream)]">{s.name}</span>
+                    </label>
+                  ))}
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="p-4 bg-[rgba(10,8,6,0.7)] border border-[rgba(184,146,58,0.12)] rounded-sm">
-                    <p className="font-mono text-[0.65rem] tracking-[0.2em] text-[var(--color-gold)] uppercase mb-2">Evidence Reviewed</p>
-                    <p className="font-display text-2xl text-[var(--color-cream)]">{reviewedEvidenceIds.length} / {evidenceItems.length}</p>
-                  </div>
-                  <div className="p-4 bg-[rgba(10,8,6,0.7)] border border-[rgba(184,146,58,0.12)] rounded-sm">
-                    <p className="font-mono text-[0.65rem] tracking-[0.2em] text-[var(--color-gold)] uppercase mb-2">Timeline Reviewed</p>
-                    <p className="font-display text-2xl text-[var(--color-cream)]">{reviewedTimelineIds.length} / {timelineEvents.length}</p>
-                  </div>
-                  <div className="p-4 bg-[rgba(10,8,6,0.7)] border border-[rgba(184,146,58,0.12)] rounded-sm">
-                    <p className="font-mono text-[0.65rem] tracking-[0.2em] text-[var(--color-gold)] uppercase mb-2">Suspects Reviewed</p>
-                    <p className="font-display text-2xl text-[var(--color-cream)]">{reviewedSuspectIds.length} / {suspects.length}</p>
-                  </div>
+                <div>
+                  <p className="font-mono mb-2 text-[var(--color-parchment)]">Reasoning (Optional)</p>
+                  <textarea
+                    value={accusationReasoning}
+                    onChange={(e) => setAccusationReasoning(e.target.value)}
+                    rows={5}
+                    className="w-full p-3 bg-[var(--color-surface)] text-[var(--color-parchment)] border border-[var(--color-border)] rounded-sm"
+                    placeholder="Explain your reasoning (optional)"
+                  />
                 </div>
 
-                {accusationReady && (
+                <div className="flex items-center gap-3">
                   <button
                     type="button"
-                    onClick={() => {}}
+                    onClick={() => {
+                      setAccusationFormOpen(false);
+                      setAccusationResultCorrect(selectedAccusedSuspectId === 1);
+                      setAccusationResultOpen(true);
+                    }}
                     className="px-6 py-3 bg-[var(--color-gold)] text-[var(--color-ink)] font-mono tracking-[0.15em] uppercase"
                   >
-                    BEGIN FINAL ACCUSATION
+                    SUBMIT ACCUSATION
                   </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setAccusationFormOpen(false)}
+                    className="px-4 py-2 bg-transparent border border-[var(--color-border)] text-[var(--color-parchment)] font-mono"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </InvestigationPanel>
+
+            <InvestigationPanel
+              open={accusationResultOpen}
+              onClose={() => setAccusationResultOpen(false)}
+              title={accusationResultCorrect ? "CASE CLOSED" : "Wrongly Accused"}
+              subtitle={accusationResultCorrect ? "" : ""}
+            >
+              <div className="space-y-4">
+                {accusationResultCorrect ? (
+                  <div>
+                    <p className="font-serif text-lg text-[var(--color-cream)] mb-2">You correctly identified the killer.</p>
+                    <p className="font-mono text-[var(--color-parchment)]">The investigation revealed that Samuel confronted Marcus Reed on the night of September 14, 1989 after discovering Marcus had been using portions of his unpublished compositions.
+
+Witness statements confirmed a heated argument backstage. Timeline evidence placed Marcus at Blue Velvet later than he claimed. Publishing records proved Samuel's ownership of the disputed music.
+
+The confrontation turned physical. Samuel struck his head during the struggle and died. Marcus then altered the scene to support a robbery narrative and, years later, attacked Ethan Graves to prevent the truth from being exposed.
+
+The evidence ultimately pointed to Marcus Reed.</p>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="font-serif text-lg text-[var(--color-cream)] mb-2">Wrongly Accused.</p>
+
+                    
+                    <p className="font-mono text-[var(--color-parchment)]">Review the investigation and try again.</p>
+                  </div>
                 )}
 
-                {!accusationReady && (
-                  <p className="font-mono text-[0.85rem] text-[var(--color-parchment)]">
-                    Complete the investigation before the final accusation can be made.
-                  </p>
-                )}
+                <div>
+                  <button
+                    onClick={() => setAccusationResultOpen(false)}
+                    className="px-6 py-3 bg-[var(--color-gold)] text-[var(--color-ink)] font-mono tracking-[0.15em] uppercase"
+                  >
+                    RETURN TO CASE
+                  </button>
+                </div>
               </div>
             </InvestigationPanel>
 
