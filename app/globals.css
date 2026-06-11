@@ -1,0 +1,169 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Bebas Neue", system-ui;
+  --font-cinzel: "Cinzel", system-ui;
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-mono: "Space Mono", "Courier New", monospace;
+  --font-sans: "DM Sans", system-ui, sans-serif;
+
+  --color-ink: #0c0c0a;
+  --color-surface: #111109;
+  --color-paper: #16140f;
+  --color-border: #1e1c16;
+  --color-border-mid: #2a2820;
+  --color-ash: #3a3830;
+  --color-muted: #6a6458;
+  --color-dim: #9a8e7a;
+  --color-parchment: #d4c8b0;
+  --color-cream: #e8ddc8;
+  --color-red: #c0392b;
+  --color-red-dim: #8b2820;
+  --color-gold: #b8923a;
+  --color-gold-dim: #7a5e20;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--color-ink);
+  color: var(--color-cream);
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-ink);
+  color: var(--color-cream);
+  margin: 0;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Noise grain overlay via pseudo - adds tactile texture */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  opacity: 1;
+}
+
+/* Vignette */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.55) 100%);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--color-ink); }
+::-webkit-scrollbar-thumb { background: var(--color-ash); border-radius: 2px; }
+
+/* Typography utilities */
+.font-display { font-family: var(--font-display); }
+.font-cinzel { font-family: var(--font-cinzel); }
+.font-serif { font-family: var(--font-serif); }
+.font-mono { font-family: var(--font-mono); }
+
+/* Stamped text effect */
+.stamp {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border: 1px solid currentColor;
+  padding: 2px 8px;
+  border-radius: 1px;
+}
+
+/* Red stamp variant */
+.stamp-red {
+  color: var(--color-red);
+  border-color: var(--color-red);
+  opacity: 0.85;
+  transform: rotate(-1.5deg);
+}
+
+/* Horizontal rule - case file divider */
+.case-divider {
+  border: none;
+  border-top: 1px solid var(--color-border-mid);
+  margin: 0;
+}
+
+/* Case-specific overlay for blue velvet pages: darker center, subtle edge vignette */
+.case-center-overlay {
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.48) 0%, rgba(0,0,0,0.28) 35%, rgba(0,0,0,0) 60%), radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.22) 100%);
+}
+
+/* String line connecting documents */
+.string-connector {
+  position: relative;
+}
+
+.string-connector::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -100%;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, var(--color-gold-dim), transparent);
+  opacity: 0.5;
+}
+
+/* Fade-in animation */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-fade-in-delay-1 { animation: fadeInUp 0.6s ease-out 0.15s forwards; opacity: 0; }
+.animate-fade-in-delay-2 { animation: fadeInUp 0.6s ease-out 0.3s forwards; opacity: 0; }
+.animate-fade-in-delay-3 { animation: fadeInUp 0.6s ease-out 0.45s forwards; opacity: 0; }
+.animate-fade-in-delay-4 { animation: fadeInUp 0.6s ease-out 0.6s forwards; opacity: 0; }
+.animate-fade-in-delay-5 { animation: fadeInUp 0.6s ease-out 0.75s forwards; opacity: 0; }
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+}
+
+.animate-flicker {
+  animation: flicker 4s ease-in-out infinite;
+}
+
+/* Typewriter cursor blink */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.cursor-blink::after {
+  content: "|";
+  animation: blink 1.2s step-end infinite;
+  color: var(--color-gold);
+  margin-left: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, .animate-fade-in, .animate-fade-in-delay-1, .animate-fade-in-delay-2,
+  .animate-fade-in-delay-3, .animate-fade-in-delay-4, .animate-fade-in-delay-5 {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
