@@ -23,7 +23,7 @@ export default function StartButton() {
       >
         {/* Arrow indicator */}
         <span className="w-6 h-px bg-[var(--color-gold)] transition-all duration-300 group-hover:w-8" />
-        <span className="font-display text-xl tracking-[0.35em] text-[var(--color-gold)] transition-colors duration-300">
+        <span className="font-display text-xl tracking-[0.35em] text-[var(--color-black)] transition-colors duration-300">
           START INVESTIGATION
         </span>
         <span className="w-6 h-px bg-[var(--color-gold)] transition-all duration-300 group-hover:w-8" />
