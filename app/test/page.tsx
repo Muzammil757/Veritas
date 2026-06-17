@@ -54,7 +54,7 @@ export default function TestPage() {
 
       {loading && (
         <p className="mt-4">
-          Marcus is thinking...
+          ...asking Marcus
         </p>
       )}
 

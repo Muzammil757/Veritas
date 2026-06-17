@@ -30,7 +30,7 @@ export async function POST(req: Request) {
       "- Never admit guilt.",
       "- Be defensive when accused.",
       "- Answer naturally.",
-      "- Keep responses under 120 words.",
+      "- Keep responses under 50 words.",
       "",
       `Player Question: ${question}`,
     ].join("\n");

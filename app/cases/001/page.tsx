@@ -11,6 +11,11 @@ export default function CasePage() {
   const [suspectsOpen, setSuspectsOpen] = useState(false);
   const [selectedSuspect, setSelectedSuspect] = useState<any | null>(null);
   const [interviewNote, setInterviewNote] = useState<string | null>(null);
+  const [interrogationOpen, setInterrogationOpen] = useState(false);
+  const [interrogationLoading, setInterrogationLoading] = useState(false);
+  const [interrogationHistory, setInterrogationHistory] = useState<Array<{ speaker: "PLAYER" | "MARCUS"; message: string }>>([]);
+  const [interrogationQuestion, setInterrogationQuestion] = useState("");
+  const [interrogationError, setInterrogationError] = useState<string | null>(null);
 
   const [evidenceOpen, setEvidenceOpen] = useState(false);
   const [selectedEvidenceId, setSelectedEvidenceId] = useState<number | null>(null);
@@ -116,7 +121,7 @@ export default function CasePage() {
       title: "Detective Graves Notes",
       summary: "Graves doubted the robbery theory. He believed Samuel knew his attacker.",
       details:
-        "Graves wrote that the scene did not match a random break-in. Samuel's belongings remained undisturbed, and the only evidence pointed toward a confrontation with someone he recognized.",
+        "Graves wrote that the scene where Samuel was found dead did not match a random break-in. In the margin, he wrote: “Someone close to him wanted the music before the contract was signed.”",
     },
   ];
 
@@ -181,6 +186,46 @@ export default function CasePage() {
 
   const selectedEvidence = evidenceItems.find((item) => item.id === selectedEvidenceId) ?? null;
   const selectedTimelineEvent = timelineEvents.find((event) => event.id === selectedTimelineId) ?? null;
+
+  const suggestedQuestions = [
+    "Did you and Samuel have any disagreements?",
+    "Where were you after the performance?",
+    "What was Samuel working on before he died?",
+  ];
+
+  async function submitInterrogationQuestion(question: string) {
+    if (!question.trim()) {
+      return;
+    }
+
+    setInterrogationError(null);
+    setInterrogationLoading(true);
+    setInterrogationHistory((prev) => [...prev, { speaker: "PLAYER", message: question }] );
+    setInterrogationQuestion("");
+
+    try {
+      const response = await fetch("/api/interrogate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Interrogation request failed (${response.status})`);
+      }
+
+      const data = await response.json();
+      const message = typeof data.response === "string" ? data.response : JSON.stringify(data.response);
+
+      setInterrogationHistory((prev) => [...prev, { speaker: "MARCUS", message }] );
+    } catch (error: any) {
+      setInterrogationError(error?.message ?? "Interrogation failed.");
+      setInterrogationHistory((prev) => [...prev, { speaker: "MARCUS", message: "Marcus remained silent." }]);
+    } finally {
+      setInterrogationLoading(false);
+    }
+  }
+
   const accusationReady =
     reviewedEvidenceIds.length === evidenceItems.length &&
     reviewedTimelineIds.length === timelineEvents.length &&
@@ -363,6 +408,7 @@ export default function CasePage() {
                 setSuspectsOpen(false);
                 setSelectedSuspect(null);
                 setInterviewNote(null);
+                setInterrogationOpen(false);
               }}
               title="SUSPECTS"
               subtitle="Individuals connected to Samuel's death."
@@ -377,6 +423,10 @@ export default function CasePage() {
                       onClick={() => {
                         setSelectedSuspect(s);
                         setInterviewNote(null);
+                        setInterrogationOpen(false);
+                        setInterrogationHistory([]);
+                        setInterrogationQuestion("");
+                        setInterrogationError(null);
                         setReviewedSuspectIds((prev) =>
                           prev.includes(s.id) ? prev : [...prev, s.id]
                         );
@@ -392,34 +442,135 @@ export default function CasePage() {
               {/* Nested profile panel inside investigation panel */}
               {selectedSuspect && (
                 <div className="mt-6 p-6 bg-[rgba(12,10,8,0.9)] border border-[rgba(184,146,58,0.12)] rounded-sm">
-                  <div className="flex items-start justify-between">
+                  {!interrogationOpen ? (
                     <div>
-                      <h3 className="font-display text-xl text-[var(--color-cream)]">{selectedSuspect.name}</h3>
-                      <p className="font-mono text-[0.85rem] text-[var(--color-parchment)]">Role: {selectedSuspect.role}</p>
-                      <p className="font-mono text-[0.85rem] text-[var(--color-parchment)]">Relationship: {selectedSuspect.relationship}</p>
-                    </div>
-                    <button onClick={() => setSelectedSuspect(null)} className="text-[var(--color-parchment)]">✕</button>
-                  </div>
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h3 className="font-display text-xl text-[var(--color-cream)]">{selectedSuspect.name}</h3>
+                          <p className="font-mono text-[0.85rem] text-[var(--color-parchment)]">Role: {selectedSuspect.role}</p>
+                          <p className="font-mono text-[0.85rem] text-[var(--color-parchment)]">Relationship: {selectedSuspect.relationship}</p>
+                        </div>
+                        <button onClick={() => setSelectedSuspect(null)} className="text-[var(--color-parchment)]">✕</button>
+                      </div>
 
-                  <div className="mt-4 text-[var(--color-parchment)]">
-                    <p className="mb-2 font-mono">Known Facts:</p>
-                    <ul className="list-disc ml-5 font-mono text-[var(--color-parchment)]">
-                      {selectedSuspect.facts.map((f: string, i: number) => (
-                        <li key={i}>{f}</li>
-                      ))}
-                    </ul>
-                    <div className="mt-6">
-                      <button
-                        onClick={() => setInterviewNote("Interview System Coming Soon")}
-                        className="px-4 py-2 bg-[var(--color-gold)] text-[var(--color-ink)] font-mono tracking-[0.15em]"
-                      >
-                        INTERROGATE
-                      </button>
-                      {interviewNote && (
-                        <div className="mt-3 p-3 bg-[var(--color-surface)] text-[var(--color-parchment)]">{interviewNote}</div>
-                      )}
+                      <div className="mt-4 text-[var(--color-parchment)]">
+                        <p className="mb-2 font-mono">Known Facts:</p>
+                        <ul className="list-disc ml-5 font-mono text-[var(--color-parchment)]">
+                          {selectedSuspect.facts.map((f: string, i: number) => (
+                            <li key={i}>{f}</li>
+                          ))}
+                        </ul>
+                        <div className="mt-6">
+                          <button
+                            onClick={() => {
+                              if (selectedSuspect?.id === 1) {
+                                setInterrogationOpen(true);
+                                setInterviewNote(null);
+                              } else {
+                                setInterrogationOpen(false);
+                                setInterviewNote("Interrogation coming soon");
+                              }
+                            }}
+                            className="px-4 py-2 bg-[var(--color-gold)] text-[var(--color-ink)] font-mono tracking-[0.15em]"
+                          >
+                            INTERROGATE
+                          </button>
+                          {interviewNote && (
+                            <div className="mt-3 p-3 bg-[var(--color-surface)] text-[var(--color-parchment)]">{interviewNote}</div>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="space-y-6">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+                        <div>
+                          <h4 className="font-display text-xl text-[var(--color-cream)]">INTERROGATION: {selectedSuspect.name}</h4>
+                          <p className="font-mono text-[0.8rem] text-[var(--color-parchment)] mt-2">Terminal transcript. Ask Marcus questions and review his answers.</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setInterrogationOpen(false)}
+                          className="px-3 py-2 border border-[var(--color-gold)] text-[var(--color-gold)] font-mono text-sm uppercase tracking-[0.15em]"
+                        >
+                          Back to Profile
+                        </button>
+                      </div>
+
+                      <div className="grid gap-5 lg:grid-cols-[280px_1fr]">
+                        <div className="space-y-3 bg-[rgba(10,8,6,0.95)] border border-[rgba(184,146,58,0.12)] rounded-sm p-4">
+                          <p className="font-mono uppercase tracking-[0.24em] text-[var(--color-gold)] mb-3">Suggested Questions</p>
+                          <div className="space-y-2">
+                            {suggestedQuestions.map((question) => (
+                              <button
+                                key={question}
+                                type="button"
+                                onClick={() => submitInterrogationQuestion(question)}
+                                className="w-full text-left px-3 py-2 rounded-sm border border-[rgba(184,146,58,0.12)] bg-[rgba(14,10,8,0.9)] text-[var(--color-parchment)] font-mono text-[0.82rem] hover:border-[var(--color-gold)]"
+                              >
+                                {question}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col h-full">
+                          <p className="font-mono uppercase tracking-[0.24em] text-[var(--color-gold)] mb-3">Transcript</p>
+                          <div className="overflow-y-auto rounded-sm border border-[rgba(184,146,58,0.12)] bg-[rgba(8,6,4,0.95)] p-4 h-[34rem] sm:h-[36rem] space-y-3">
+                            {interrogationHistory.length === 0 && (
+                              <div className="rounded-sm border border-[rgba(184,146,58,0.12)] bg-[rgba(14,10,8,0.85)] p-4">
+                                <p className="font-mono text-[0.85rem] text-[var(--color-parchment)]">Marcus is waiting for your first question.</p>
+                              </div>
+                            )}
+
+                            {interrogationHistory.map((item, index) => (
+                              <div
+                                key={index}
+                                className={
+                                  "rounded-sm p-3 border " +
+                                  (item.speaker === "PLAYER"
+                                    ? "border-[rgba(124,103,29,0.2)] bg-[rgba(30,24,18,0.9)]"
+                                    : "border-[rgba(184,146,58,0.18)] bg-[rgba(18,14,10,0.95)]")
+                                }
+                              >
+                                <p className="font-mono text-[0.75rem] uppercase tracking-[0.22em] text-[var(--color-gold)] mb-2">{item.speaker === "PLAYER" ? "You" : "Marcus"}</p>
+                                <p className="font-mono text-[0.9rem] text-[var(--color-parchment)] whitespace-pre-line">{item.message}</p>
+                              </div>
+                            ))}
+
+                            {interrogationLoading && (
+                              <div className="rounded-sm border border-[rgba(184,146,58,0.18)] bg-[rgba(18,14,10,0.95)] p-3">
+                                <p className="font-mono text-[0.85rem] text-[var(--color-parchment)]">Marcus is thinking...</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        <textarea
+                          value={interrogationQuestion}
+                          onChange={(e) => setInterrogationQuestion(e.target.value)}
+                          rows={4}
+                          className="w-full resize-none rounded-sm border border-[rgba(184,146,58,0.12)] bg-[rgba(10,8,6,0.9)] p-3 text-[var(--color-parchment)] font-mono"
+                          placeholder="Ask a custom question..."
+                        />
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+                          <button
+                            type="button"
+                            onClick={() => submitInterrogationQuestion(interrogationQuestion)}
+                            disabled={!interrogationQuestion.trim() || interrogationLoading}
+                            className="w-full sm:w-auto px-5 py-3 bg-[var(--color-gold)] text-[var(--color-ink)] font-mono text-sm uppercase rounded-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            ASK
+                          </button>
+                          {interrogationError && (
+                            <p className="text-[var(--color-parchment)] text-[0.8rem]">{interrogationError}</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </InvestigationPanel>
