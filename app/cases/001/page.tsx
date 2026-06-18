@@ -13,9 +13,10 @@ export default function CasePage() {
   const [interviewNote, setInterviewNote] = useState<string | null>(null);
   const [interrogationOpen, setInterrogationOpen] = useState(false);
   const [interrogationLoading, setInterrogationLoading] = useState(false);
-  const [interrogationHistory, setInterrogationHistory] = useState<Array<{ speaker: "PLAYER" | "MARCUS"; message: string }>>([]);
+  const [interrogationHistory, setInterrogationHistory] = useState<Record<number, Array<{ speaker: "PLAYER" | "SUSPECT"; message: string }>>>({});
   const [interrogationQuestion, setInterrogationQuestion] = useState("");
   const [interrogationError, setInterrogationError] = useState<string | null>(null);
+  const [customQuestionsUsed, setCustomQuestionsUsed] = useState<Record<number, number>>({});
 
   const [evidenceOpen, setEvidenceOpen] = useState(false);
   const [selectedEvidenceId, setSelectedEvidenceId] = useState<number | null>(null);
@@ -75,7 +76,7 @@ export default function CasePage() {
       relationship: "Managed the club where Samuel performed.",
       facts: [
         "Closed the venue after the incident.",
-        "Handled security reports.",
+        "First person to discover Samuel's body.",
         "Also heard an argument backstage",
       ],
       status: "Available for Interview",
@@ -187,58 +188,116 @@ export default function CasePage() {
   const selectedEvidence = evidenceItems.find((item) => item.id === selectedEvidenceId) ?? null;
   const selectedTimelineEvent = timelineEvents.find((event) => event.id === selectedTimelineId) ?? null;
 
-  const suggestedQuestions = [
-    "How close were you and Samuel, really?",
-    "Did you and Samuel have any disagreements?",
-    "Where were you after the performance?",
-    "What was Samuel working on before he died?",
-    "What was the last interaction you had with Samuel that night?",
-    "Did something unusual happen that night?",
-  ];
-  const suggestedResponses: Record<string, string> = {
-  "How close were you and Samuel, really?":
-    "Closer than most people realise. We worked together at the club for over 3 years.",
-  "Did you and Samuel have any disagreements?":
-    "Every musician disagrees with their friends once in a while. Nothing unusual.",
+  const suspectQuestions: Record<string, string[]> = {
+    marcus: [
+      "How close were you and Samuel, really?",
+      "Did you and Samuel have any disagreements?",
+      "Where were you after the performance?",
+      "What was Samuel working on before he died?",
+      "What was the last interaction you had with Samuel that night?",
+      "Did you hear anything unusual backstage that night?",
+    ],
+    lena: [
+      "How was your relationship with Samuel?",
+      "Did Samuel seem different in the days before his death?",
+      "What can you tell me about Samuel's latest composition?",
+      "Tell me about your whereabouts after the performance.",
+      "Did you interact with anyone after the performance?",
+    
+    ],
+    vincent: [
+      "How long had Samuel performed at Blue Velvet?",
+      "Who discovered Samuel's body?",
+      "Why do you think police believed it was a robbery?",
+      "Why were you at the backstage alley that night?",
+      
+    ],
+    grace: [
+      "How often did you speak with Samuel?",
+      "When did you last see Samuel?",
+      "Did Samuel seem different that night?",
+      "Did you hear anything unusual backstage?",
+      "What was Samuel working on before he died?",
+      "Who do you think knew Samuel best?",
+    ],
+  };
 
-  "Where were you after the performance?":
-    "I left for home right after hearing those noises backstage.",
-
-  "What was Samuel working on before he died?":
-    "Samuel was working on his finest piece called 'Midnight Blue'. It was for his next jazz performance. ",
-  "What was the last interaction you had with Samuel that night?":
-    "We had a friendly chat about the audience response right after the show.",
-  "Did something unusual happen that night?":
-    "Yes, I was with Lena - the jazz singer, both of us heard voices arguing back the stage.",
-};
+  const suspectResponses: Record<string, Record<string, string>> = {
+    marcus: {
+      "How close were you and Samuel, really?":
+        "Closer than most people realise. We worked together at the club for over 3 years.",
+      "Did you and Samuel have any disagreements?":
+        "Every musician disagrees with their friends once in a while. Nothing unusual.",
+      "Where were you after the performance?":
+        "I left for home right after hearing those noises backstage.",
+      "What was Samuel working on before he died?":
+        "Samuel was working on his finest piece called 'Midnight Blue'. It was for his next jazz performance.",
+      "What was the last interaction you had with Samuel that night?":
+        "We had a friendly chat about the audience response right after the show.",
+      "Did you hear anything unusual backstage that night?":
+        "Yes, I was with Lena - the jazz singer, both of us heard voices arguing back the stage.",
+    },
+    lena: {
+      "How was your relationship with Samuel?": "We had known each other since the begining of our careers. Spent years performing together.",
+      "Did Samuel seem different in the days before his death?": "Yes, he seemed a bit distracted and unusally silent with everyone.",
+      "What can you tell me about Samuel's latest composition?": "Honestly not much. He kept his unfinished compositions to himself until the very last moment.",
+      "Tell me about your whereabouts after the performance.": "I was packing up my things when i heard voices coming from the backstage. One of the voices sounded like Samuel's , but couldn't confirm it.",      
+      "Did you interact with anyone after the performance?": "It was Vincent, the club manager, I informed him about the suspicious voices I heard backstage.",      
+    },
+    vincent: {
+      "How long had Samuel performed at Blue Velvet?": "Samuel had been performing at the Blue Velvet for over 5 years. He was the beloved perfomer of the club.",
+      "Who discovered Samuel's body?": "I did. It was me who reported the body to the authorities.",
+      "Why do you think police believed it was a robbery?": "The alley had a reputation for petty crimes and robbery attempts. The police naturally assumed it was an another robbery gone wrong.",
+      "Why were you at the backstage alley that night?": "Lena approached me and mentioned hearing raised voices backstage. Once I wrapped my things up, I checked the backstage area myself and found no one there. Just as I was closing the backtage alley door, I saw a body lying on the ground.",
+      
+    },
+    grace: {
+      "How often did you speak with Samuel?": "Response not written yet.",
+      "When did you last see Samuel?": "Response not written yet.",
+      "Did Samuel seem different that night?": "Response not written yet.",
+      "Did you hear anything unusual backstage?": "Response not written yet.",
+      "What was Samuel working on before he died?": "Response not written yet.",
+      "Who do you think knew Samuel best?": "Response not written yet.",
+    },
+  };
 
 function handleSuggestedQuestion(question: string) {
-  const response =
-    suggestedResponses[question] ??
-    "Marcus avoids giving a clear answer.";
+    const suspectKey = selectedSuspect?.id === 1 ? "marcus" : selectedSuspect?.id === 2 ? "lena" : selectedSuspect?.id === 3 ? "vincent" : "grace";
+    const response = suspectResponses[suspectKey]?.[question] ?? "Response not written yet.";
 
-  setInterrogationHistory((prev) => [
-    ...prev,
-    { speaker: "PLAYER", message: question },
-    { speaker: "MARCUS", message: response },
-  ]);
-}
+    setInterrogationHistory((prev) => ({
+      ...prev,
+      [selectedSuspect.id]: [
+        ...(prev[selectedSuspect.id] || []),
+        { speaker: "PLAYER", message: question },
+        { speaker: "SUSPECT", message: response },
+      ],
+    }));
+  }
 
   async function submitInterrogationQuestion(question: string) {
     if (!question.trim()) {
       return;
     }
 
+    const used = customQuestionsUsed[selectedSuspect.id] ?? 0;
+    if (used >= 3) {
+      return;
+    }
+
     setInterrogationError(null);
     setInterrogationLoading(true);
-    setInterrogationHistory((prev) => [...prev, { speaker: "PLAYER", message: question }] );
+    setInterrogationHistory((prev) => ({
+      ...prev,
+      [selectedSuspect.id]: [...(prev[selectedSuspect.id] || []), { speaker: "PLAYER", message: question }],
+    }));
     setInterrogationQuestion("");
 
     try {
       const response = await fetch("/api/interrogate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question }),
+        body: JSON.stringify({ question, suspect: selectedSuspect.name }),
       });
 
       if (!response.ok) {
@@ -248,10 +307,17 @@ function handleSuggestedQuestion(question: string) {
       const data = await response.json();
       const message = typeof data.response === "string" ? data.response : JSON.stringify(data.response);
 
-      setInterrogationHistory((prev) => [...prev, { speaker: "MARCUS", message }] );
+      setInterrogationHistory((prev) => ({
+        ...prev,
+        [selectedSuspect.id]: [...(prev[selectedSuspect.id] || []), { speaker: "SUSPECT", message }],
+      }));
+      setCustomQuestionsUsed((prev) => ({ ...prev, [selectedSuspect.id]: used + 1 }));
     } catch (error: any) {
       setInterrogationError(error?.message ?? "Interrogation failed.");
-      setInterrogationHistory((prev) => [...prev, { speaker: "MARCUS", message: "Marcus remained silent." }]);
+      setInterrogationHistory((prev) => ({
+        ...prev,
+        [selectedSuspect.id]: [...(prev[selectedSuspect.id] || []), { speaker: "SUSPECT", message: "Remained silent." }],
+      }));
     } finally {
       setInterrogationLoading(false);
     }
@@ -449,13 +515,17 @@ function handleSuggestedQuestion(question: string) {
                   <div key={s.id} className="p-4 bg-[rgba(10,8,6,0.7)] border border-[rgba(184,146,58,0.12)] rounded-sm hover:-translate-y-1 transition">
                     <h4 className="font-serif text-lg text-[var(--color-cream)]">{s.name}</h4>
                     <p className="font-mono text-[0.8rem] text-[var(--color-parchment)]">{s.role}</p>
-                    <p className="font-mono text-[0.8rem] text-[var(--color-parchment)] mb-3">{s.status}</p>
+<p className="font-mono text-[0.8rem] text-[var(--color-parchment)] mb-3">{s.status}</p>
                     <button
                       onClick={() => {
                         setSelectedSuspect(s);
                         setInterviewNote(null);
                         setInterrogationOpen(false);
-                        setInterrogationHistory([]);
+                        setInterrogationHistory((prev) => {
+                          const newHistory = { ...prev };
+                          delete newHistory[s.id];
+                          return newHistory;
+                        });
                         setInterrogationQuestion("");
                         setInterrogationError(null);
                         setReviewedSuspectIds((prev) =>
@@ -491,16 +561,11 @@ function handleSuggestedQuestion(question: string) {
                             <li key={i}>{f}</li>
                           ))}
                         </ul>
-                        <div className="mt-6">
+<div className="mt-6">
                           <button
                             onClick={() => {
-                              if (selectedSuspect?.id === 1) {
-                                setInterrogationOpen(true);
-                                setInterviewNote(null);
-                              } else {
-                                setInterrogationOpen(false);
-                                setInterviewNote("Interrogation coming soon");
-                              }
+                              setInterrogationOpen(true);
+                              setInterviewNote(null);
                             }}
                             className="px-4 py-2 bg-[var(--color-gold)] text-[var(--color-ink)] font-mono tracking-[0.15em]"
                           >
@@ -517,7 +582,7 @@ function handleSuggestedQuestion(question: string) {
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
                         <div>
                           <h4 className="font-display text-xl text-[var(--color-cream)]">INTERROGATION: {selectedSuspect.name}</h4>
-                          <p className="font-mono text-[0.8rem] text-[var(--color-parchment)] mt-2">Terminal transcript. Ask Marcus questions and review his answers.</p>
+                          <p className="font-mono text-[0.8rem] text-[var(--color-parchment)] mt-2">Terminal transcript. Ask {selectedSuspect?.name} questions and review their answers.</p>
                         </div>
                         <button
                           type="button"
@@ -532,29 +597,32 @@ function handleSuggestedQuestion(question: string) {
                         <div className="space-y-3 bg-[rgba(10,8,6,0.95)] border border-[rgba(184,146,58,0.12)] rounded-sm p-4">
                           <p className="font-mono uppercase tracking-[0.24em] text-[var(--color-gold)] mb-3">Suggested Questions</p>
                           <div className="space-y-2">
-                            {suggestedQuestions.map((question) => (
-                              <button
-                                key={question}
-                                type="button"
-                                onClick={() => handleSuggestedQuestion(question)} 
-                                className="w-full text-left px-3 py-2 rounded-sm border border-[rgba(184,146,58,0.12)] bg-[rgba(14,10,8,0.9)] text-[var(--color-parchment)] font-mono text-[0.82rem] hover:border-[var(--color-gold)]"
-                              >
-                                {question}
-                              </button>
-                            ))}
+                            {(() => {
+                              const key = selectedSuspect?.id === 1 ? "marcus" : selectedSuspect?.id === 2 ? "lena" : selectedSuspect?.id === 3 ? "vincent" : "grace";
+                              return suspectQuestions[key].map((question) => (
+                                <button
+                                  key={question}
+                                  type="button"
+                                  onClick={() => handleSuggestedQuestion(question)}
+                                  className="w-full text-left px-3 py-2 rounded-sm border border-[rgba(184,146,58,0.12)] bg-[rgba(14,10,8,0.9)] text-[var(--color-parchment)] font-mono text-[0.82rem] hover:border-[var(--color-gold)]"
+                                >
+                                  {question}
+                                </button>
+                              ));
+                            })()}
                           </div>
                         </div>
 
                         <div className="flex flex-col h-full">
                           <p className="font-mono uppercase tracking-[0.24em] text-[var(--color-gold)] mb-3">Transcript</p>
                           <div className="overflow-y-auto rounded-sm border border-[rgba(184,146,58,0.12)] bg-[rgba(8,6,4,0.95)] p-4 h-[34rem] sm:h-[36rem] space-y-3">
-                            {interrogationHistory.length === 0 && (
+                            {(!interrogationHistory[selectedSuspect?.id]?.length) && (
                               <div className="rounded-sm border border-[rgba(184,146,58,0.12)] bg-[rgba(14,10,8,0.85)] p-4">
-                                <p className="font-mono text-[0.85rem] text-[var(--color-parchment)]">Marcus is waiting for your first question.</p>
+                                <p className="font-mono text-[0.85rem] text-[var(--color-parchment)]">{selectedSuspect?.name} is waiting for your first question.</p>
                               </div>
                             )}
 
-                            {interrogationHistory.map((item, index) => (
+                            {interrogationHistory[selectedSuspect?.id]?.map((item, index) => (
                               <div
                                 key={index}
                                 className={
@@ -564,14 +632,14 @@ function handleSuggestedQuestion(question: string) {
                                     : "border-[rgba(184,146,58,0.18)] bg-[rgba(18,14,10,0.95)]")
                                 }
                               >
-                                <p className="font-mono text-[0.75rem] uppercase tracking-[0.22em] text-[var(--color-gold)] mb-2">{item.speaker === "PLAYER" ? "You" : "Marcus"}</p>
+                                <p className="font-mono text-[0.75rem] uppercase tracking-[0.22em] text-[var(--color-gold)] mb-2">{item.speaker === "PLAYER" ? "You" : selectedSuspect?.name}</p>
                                 <p className="font-mono text-[0.9rem] text-[var(--color-parchment)] whitespace-pre-line">{item.message}</p>
                               </div>
                             ))}
 
                             {interrogationLoading && (
                               <div className="rounded-sm border border-[rgba(184,146,58,0.18)] bg-[rgba(18,14,10,0.95)] p-3">
-                                <p className="font-mono text-[0.85rem] text-[var(--color-parchment)]">Marcus is thinking...</p>
+                                <p className="font-mono text-[0.85rem] text-[var(--color-parchment)]">{selectedSuspect?.name} is thinking...</p>
                               </div>
                             )}
                           </div>
@@ -579,18 +647,20 @@ function handleSuggestedQuestion(question: string) {
                       </div>
 
                       <div className="space-y-3">
+                        <p className="font-mono text-[0.75rem] text-[var(--color-parchment)]">Custom Questions Remaining: {3 - (customQuestionsUsed[selectedSuspect?.id] ?? 0)}</p>
                         <textarea
                           value={interrogationQuestion}
                           onChange={(e) => setInterrogationQuestion(e.target.value)}
                           rows={4}
-                          className="w-full resize-none rounded-sm border border-[rgba(184,146,58,0.12)] bg-[rgba(10,8,6,0.9)] p-3 text-[var(--color-parchment)] font-mono"
+                          disabled={(customQuestionsUsed[selectedSuspect?.id] ?? 0) >= 3}
+                          className="w-full resize-none rounded-sm border border-[rgba(184,146,58,0.12)] bg-[rgba(10,8,6,0.9)] p-3 text-[var(--color-parchment)] font-mono disabled:opacity-50 disabled:cursor-not-allowed"
                           placeholder="Ask a custom question..."
                         />
                         <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
                           <button
                             type="button"
                             onClick={() => submitInterrogationQuestion(interrogationQuestion)}
-                            disabled={!interrogationQuestion.trim() || interrogationLoading}
+                            disabled={!interrogationQuestion.trim() || interrogationLoading || (customQuestionsUsed[selectedSuspect?.id] ?? 0) >= 3}
                             className="w-full sm:w-auto px-5 py-3 bg-[var(--color-gold)] text-[var(--color-ink)] font-mono text-sm uppercase rounded-sm disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             ASK
@@ -599,6 +669,9 @@ function handleSuggestedQuestion(question: string) {
                             <p className="text-[var(--color-parchment)] text-[0.8rem]">{interrogationError}</p>
                           )}
                         </div>
+                        {(customQuestionsUsed[selectedSuspect?.id] ?? 0) >= 3 && (
+                          <p className="font-mono text-[0.85rem] text-[var(--color-parchment)]">Custom questions exhausted for this suspect. Use suggested questions or continue reviewing the case files.</p>
+                        )}
                       </div>
                     </div>
                   )}
