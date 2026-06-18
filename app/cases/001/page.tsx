@@ -51,8 +51,8 @@ export default function CasePage() {
       relationship: "Samuel's longtime bandmate and closest friend.",
       facts: [
         "Last person seen speaking with Samuel.",
-        "Claims he left after the final set.",
-        "Worked with Samuel for over ten years.",
+        "Claims he left early that night.",
+        "Worked with Samuel for over 3 years.",
       ],
       status: "Available for Interview",
     },
@@ -64,7 +64,7 @@ export default function CasePage() {
       facts: [
         "Performed on stage with Samuel that night.",
         "Heard an argument backstage.",
-        "Provided an incomplete witness statement.",
+        "Was popular among the audience visiting the club.",
       ],
       status: "Available for Interview",
     },
@@ -76,7 +76,7 @@ export default function CasePage() {
       facts: [
         "Closed the venue after the incident.",
         "Handled security reports.",
-        "Claims nothing unusual happened that evening.",
+        "Also heard an argument backstage",
       ],
       status: "Available for Interview",
     },
@@ -121,7 +121,7 @@ export default function CasePage() {
       title: "Detective Graves Notes",
       summary: "Graves doubted the robbery theory. He believed Samuel knew his attacker.",
       details:
-        "Graves wrote that the scene where Samuel was found dead did not match a random break-in. In the margin, he wrote: “Someone close to him wanted the music before the contract was signed.”",
+        "Graves wrote that the scene where Samuel was found dead did not match a random break-in. In the margin, he wrote: “unusually protective for Midnight Blue”",
     },
   ];
 
@@ -188,10 +188,41 @@ export default function CasePage() {
   const selectedTimelineEvent = timelineEvents.find((event) => event.id === selectedTimelineId) ?? null;
 
   const suggestedQuestions = [
+    "How close were you and Samuel, really?",
     "Did you and Samuel have any disagreements?",
     "Where were you after the performance?",
     "What was Samuel working on before he died?",
+    "What was the last interaction you had with Samuel that night?",
+    "Did something unusual happen that night?",
   ];
+  const suggestedResponses: Record<string, string> = {
+  "How close were you and Samuel, really?":
+    "Closer than most people realise. We worked together at the club for over 3 years.",
+  "Did you and Samuel have any disagreements?":
+    "Every musician disagrees with their friends once in a while. Nothing unusual.",
+
+  "Where were you after the performance?":
+    "I left for home right after hearing those noises backstage.",
+
+  "What was Samuel working on before he died?":
+    "Samuel was working on his finest piece called 'Midnight Blue'. It was for his next jazz performance. ",
+  "What was the last interaction you had with Samuel that night?":
+    "We had a friendly chat about the audience response right after the show.",
+  "Did something unusual happen that night?":
+    "Yes, I was with Lena - the jazz singer, both of us heard voices arguing back the stage.",
+};
+
+function handleSuggestedQuestion(question: string) {
+  const response =
+    suggestedResponses[question] ??
+    "Marcus avoids giving a clear answer.";
+
+  setInterrogationHistory((prev) => [
+    ...prev,
+    { speaker: "PLAYER", message: question },
+    { speaker: "MARCUS", message: response },
+  ]);
+}
 
   async function submitInterrogationQuestion(question: string) {
     if (!question.trim()) {
@@ -505,7 +536,7 @@ export default function CasePage() {
                               <button
                                 key={question}
                                 type="button"
-                                onClick={() => submitInterrogationQuestion(question)}
+                                onClick={() => handleSuggestedQuestion(question)} 
                                 className="w-full text-left px-3 py-2 rounded-sm border border-[rgba(184,146,58,0.12)] bg-[rgba(14,10,8,0.9)] text-[var(--color-parchment)] font-mono text-[0.82rem] hover:border-[var(--color-gold)]"
                               >
                                 {question}
