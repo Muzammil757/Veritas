@@ -15,7 +15,7 @@ Players examine evidence, question suspects, uncover hidden connections, and mak
 - Evidence-aware question unlocking
 - Suspect profiles and interrogation system
 - Gemini-powered custom questioning
-- Timeline / Case Board reconstruction
+- Timeline analysis
 - Final accusation system
 
 ## Tech Stack
