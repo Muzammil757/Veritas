@@ -85,7 +85,7 @@ export default function CasePage() {
       id: 4,
       name: "Grace Hart",
       role: "Music Producer",
-      relationship: "Worked with Samuel on an upcoming album.",
+      relationship: "Worked with Samuel on his past albums.",
       facts: [
         "Had financial disagreements with Samuel.",
         "Met him earlier that day.",
@@ -181,7 +181,7 @@ export default function CasePage() {
       title: "Body discovered.",
       summary: "Samuel is found behind the club.",
       details:
-        "A passerby discovered Samuel and alerted the authorities. The scene was secured, and the first responders noted the lack of disturbance around his body.",
+        "The club manager discovered Samuel and alerted the authorities. The scene was secured, and the first responders noted the lack of disturbance around his body.",
     },
   ];
 
@@ -191,16 +191,14 @@ export default function CasePage() {
   const suspectQuestions: Record<string, string[]> = {
     marcus: [
       "How close were you and Samuel, really?",
-      "Did you and Samuel have any disagreements?",
       "Where were you after the performance?",
       "What was Samuel working on before he died?",
       "What was the last interaction you had with Samuel that night?",
-      "Did you hear anything unusual backstage that night?",
+      "Did you notice anything unusual that night?",
     ],
     lena: [
-      "How was your relationship with Samuel?",
       "Did Samuel seem different in the days before his death?",
-      "What can you tell me about Samuel's latest composition?",
+      "What can you tell me about Samuel's next composition before he died?",
       "Tell me about your whereabouts after the performance.",
       "Did you interact with anyone after the performance?",
     
@@ -213,12 +211,10 @@ export default function CasePage() {
       
     ],
     grace: [
-      "How often did you speak with Samuel?",
-      "When did you last see Samuel?",
-      "Did Samuel seem different that night?",
-      "Did you hear anything unusual backstage?",
-      "What was Samuel working on before he died?",
-      "Who do you think knew Samuel best?",
+      "Why didn't you attend the performance on the night of Samuel's death?",
+      "What was the financial dispute you had with Samuel?",
+      "Tell me about the production of the composition - 'Midnight Blue'.",
+      
     ],
   };
 
@@ -226,21 +222,18 @@ export default function CasePage() {
     marcus: {
       "How close were you and Samuel, really?":
         "Closer than most people realise. We worked together at the club for over 3 years.",
-      "Did you and Samuel have any disagreements?":
-        "Every musician disagrees with their friends once in a while. Nothing unusual.",
       "Where were you after the performance?":
-        "I left for home right after hearing those noises backstage.",
+        "I left the club earlier than the others. It had been a long shift and I wanted to get home and rest.",
       "What was Samuel working on before he died?":
         "Samuel was working on his finest piece called 'Midnight Blue'. It was for his next jazz performance.",
       "What was the last interaction you had with Samuel that night?":
         "We had a friendly chat about the audience response right after the show.",
-      "Did you hear anything unusual backstage that night?":
-        "Yes, I was with Lena - the jazz singer, both of us heard voices arguing back the stage.",
+      "Did you notice anything unusual that night?":
+        "Yes, a few of us from the club heard raised voices coming from backstage.",
     },
     lena: {
-      "How was your relationship with Samuel?": "We had known each other since the begining of our careers. Spent years performing together.",
       "Did Samuel seem different in the days before his death?": "Yes, he seemed a bit distracted and unusally silent with everyone.",
-      "What can you tell me about Samuel's latest composition?": "Honestly not much. He kept his unfinished compositions to himself until the very last moment.",
+      "What can you tell me about Samuel's next composition before he died?": "Honestly not much. He kept his unfinished compositions to himself until the very last moment.",
       "Tell me about your whereabouts after the performance.": "I was packing up my things when i heard voices coming from the backstage. One of the voices sounded like Samuel's , but couldn't confirm it.",      
       "Did you interact with anyone after the performance?": "It was Vincent, the club manager, I informed him about the suspicious voices I heard backstage.",      
     },
@@ -252,12 +245,10 @@ export default function CasePage() {
       
     },
     grace: {
-      "How often did you speak with Samuel?": "Response not written yet.",
-      "When did you last see Samuel?": "Response not written yet.",
-      "Did Samuel seem different that night?": "Response not written yet.",
-      "Did you hear anything unusual backstage?": "Response not written yet.",
-      "What was Samuel working on before he died?": "Response not written yet.",
-      "Who do you think knew Samuel best?": "Response not written yet.",
+      "Why didn't you attend the performance on the night of Samuel's death?": "It's not unusual for a producer to miss a performance. My role wasn't to attend every show of Samuel's.",
+      "What was the financial dispute you had with Samuel?": "There was just a disagreement about the share of Samuel's recent performance. It wasn't nearly as dramatic as people make it sound.",
+      "Tell me about the production of the composition - 'Midnight Blue'.": "Midnight Blue was the best composition I've ever worked on. It was me  who produced it and also what turned Marcus into a star overnight.",
+      
     },
   };
 
@@ -441,7 +432,7 @@ function handleSuggestedQuestion(question: string) {
             <div className="max-w-5xl mx-auto">
             {/* Page title */}
             <div className="animate-fade-in mb-6">
-              <p className="font-mono text-[0.6rem] tracking-[0.3em] text-[var(--color-gold)] uppercase mb-2">THE BLUE VELVET ARCHIVES</p>
+              <p className="font-mono text-[0.6rem] tracking-[0.3em] text-[var(--color-gold)] uppercase mb-2">Archives</p>
               <div className="flex items-center gap-4">
                 <h1 className="font-display text-4xl sm:text-5xl tracking-[0.08em] text-[var(--color-cream)]">THE BLUE VELVET ARCHIVES</h1>
                 <span className="stamp stamp-red">UNSOLVED</span>

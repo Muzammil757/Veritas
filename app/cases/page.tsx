@@ -14,7 +14,7 @@ const cases = [
     title: "The Final Act of Blue Velvet",
     description:
       "A forgotten death.\nA retired detective silenced.\nA truth buried for eight years.",
-    status: "UNSOLVED",
+    status: "BEGINNER",
     location: "Blue Velvet Jazz Club",
     year: "1989",
     classification: "HOMICIDE",
@@ -236,7 +236,7 @@ function CaseCard({ case_: c }: { case_: CaseData }) {
             }}
           >
             {[
-              { label: "Status", value: c.status },
+              { label: "Level", value: c.status },
               { label: "Location", value: c.location },
               { label: "Year", value: c.year },
               { label: "Lead Investigator", value: c.investigator },
