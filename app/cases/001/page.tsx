@@ -45,18 +45,19 @@ export default function CasePage() {
   };
 
   const suspects: Suspect[] = [
-    {
-      id: 1,
-      name: "Marcus Reed",
-      role: "Jazz Trumpeter",
-      relationship: "Samuel's longtime bandmate and closest friend.",
+      {
+      id: 3,
+      name: "Vincent Joseph",
+      role: "Club Manager",
+      relationship: "Managed the club where Samuel performed.",
       facts: [
-        "Last person seen speaking with Samuel.",
-        "Claims he left early that night.",
-        "Worked with Samuel for over 3 years.",
+        "Closed the venue after the incident.",
+        "First person to discover Samuel's body.",
+        "Also heard an argument backstage",
       ],
       status: "Available for Interview",
     },
+    
     {
       id: 2,
       name: "Lena Marie",
@@ -70,14 +71,14 @@ export default function CasePage() {
       status: "Available for Interview",
     },
     {
-      id: 3,
-      name: "Vincent Joseph",
-      role: "Club Manager",
-      relationship: "Managed the club where Samuel performed.",
+      id: 1,
+      name: "Marcus Reed",
+      role: "Jazz Trumpeter",
+      relationship: "Samuel's longtime bandmate and closest friend.",
       facts: [
-        "Closed the venue after the incident.",
-        "First person to discover Samuel's body.",
-        "Also heard an argument backstage",
+        "Last person seen speaking with Samuel.",
+        "Claims he left early that night.",
+        "Worked with Samuel for over 3 years.",
       ],
       status: "Available for Interview",
     },
@@ -895,11 +896,11 @@ return [...unlockedQuestions, ...lockedQuestions].map((question) => {
                 {accusationResultCorrect ? (
                   <div>
                     <p className="font-serif text-lg text-[var(--color-cream)] mb-2">You correctly identified the killer.</p>
-                    <p className="font-mono text-[var(--color-parchment)]">The investigation revealed that Samuel confronted Marcus Reed on the night of September 14, 1989 after discovering Marcus had been using portions of his unpublished compositions.
+                    <p className="leading-9 font-mono text-[var(--color-parchment)]">The investigation revealed that Samuel confronted Marcus Reed on the night of September 14, 1989 after discovering Marcus had been using portions of his unpublished compositions.
 
-Witness statements confirmed a heated argument backstage. Timeline evidence placed Marcus at Blue Velvet later than he claimed. Publishing records proved Samuel's ownership of the disputed music.
+Witness statements confirmed a heated argument backstage. Publishing records proved Samuel's ownership of the disputed music.</p>
 
-The confrontation turned physical. Samuel struck his head during the struggle and died. Marcus then altered the scene to support a robbery narrative and, years later, attacked Ethan Graves to prevent the truth from being exposed.
+ <p className="leading-9 font-mono text-[var(--color-parchment)]">The confrontation turned physical while Samuel struck his head during the struggle and died. Marcus then altered the scene to support a robbery narrative and, years later, attacked Ethan Graves to prevent the truth from being exposed.
 
 The evidence ultimately pointed to Marcus Reed.</p>
                   </div>
