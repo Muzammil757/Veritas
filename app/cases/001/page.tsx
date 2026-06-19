@@ -7,7 +7,7 @@ import VeritasLogo from "../../components/VeritasLogo";
 import InvestigationPanel from "../../components/InvestigationPanel";
 
 export default function CasePage() {
-  // Suspects / panel state lives inside page so it can control nested profile views
+  
   const [suspectsOpen, setSuspectsOpen] = useState(false);
   const [selectedSuspect, setSelectedSuspect] = useState<any | null>(null);
   const [interviewNote, setInterviewNote] = useState<string | null>(null);
@@ -389,10 +389,10 @@ function handleSuggestedQuestion(question: string) {
         style={{ borderColor: "rgba(184,146,58,0.18)" }}
       >
         <h3 className="font-serif text-xl italic text-[var(--color-cream)] mb-2 transition-colors duration-300 group-hover:text-[var(--color-gold)]">TIMELINE</h3>
-        <p className="font-mono text-[0.85rem] text-[var(--color-parchment)] mb-4">Reconstruct the events of September 14, 1989.</p>
-        <p className="font-mono text-[0.85rem] text-[var(--color-parchment)] mb-4">Piece together what happened on the night Samuel King died.</p>
+        <p className="font-mono text-[0.85rem] text-[var(--color-parchment)] mb-4">Review the known events at the Blue Velvet Jazz Club on September 14, 1989.</p>
+        <p className="font-mono text-[0.85rem] text-[var(--color-parchment)] mb-4">Use it to connect evidences and testimonies.</p>
         <div className="mt-auto font-mono text-[0.9rem] text-[var(--color-gold)]">{reviewedTimelineIds.length} / {timelineEvents.length} events reviewed</div>
-        <div className="mt-4 text-[0.8rem] text-[var(--color-gold)] opacity-0 transition-opacity duration-300 group-hover:opacity-100">Click to reconstruct →</div>
+        <div className="mt-4 text-[0.8rem] text-[var(--color-gold)] opacity-0 transition-opacity duration-300 group-hover:opacity-100">Click to review →</div>
       </button>
     );
   }
@@ -487,9 +487,10 @@ function handleSuggestedQuestion(question: string) {
             {/* Case summary card */}
             <section className="mb-8">
               <div className="p-8" style={{ background: "var(--color-paper)", border: "1px solid var(--color-border-mid)", borderRadius: "2px" }}>
-                <p className="font-mono text-[0.7rem] text-[var(--color-ash)] mb-4">September 14, 1989.</p>
-                <h2 className="font-serif text-2xl italic text-[var(--color-cream)] mb-4">Samuel Alexander</h2>
-                <p className="text-[var(--color-dim)] leading-7">Samuel Alexander, a gifted jazz pianist and composer, was found dead shortly after a performance at Blue Velvet Jazz Club. The death was ruled a robbery gone wrong. Retired Detective Ethan Graves spent eight years privately investigating the case. Before he could reveal his findings, an attack left him with Locked-in Syndrome . His investigation records have now been recovered.</p>
+                <p className="font-mono text-[0.7rem] text-[var(--color-gold)] mb-4">September 14, 1989.</p>
+                <h2 className="font-serif text-2xl italic text-[var(--color-cream)] mb-4">CASE BRIEFING </h2>
+                <p className="text-[var(--color-dim)] leading-7">Samuel Alexander, a gifted jazz pianist and composer, was found dead shortly after a performance at Blue Velvet Jazz Club. The death was ruled a robbery gone wrong. Retired Detective Ethan Graves spent eight years investigating the case before an attak left him with Locked-In Syndrome.</p>
+                <p className="text-[var(--color-dim)] leading-7">Now, as his grandson Daniel Graves, the investigation is in your hands.</p>
               </div>
             </section>
 
@@ -497,16 +498,16 @@ function handleSuggestedQuestion(question: string) {
               <section className="mb-12">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="h-56">
-                    <EvidenceLauncher />
+                    <TimelineLauncher/>
                   </div>
                   <div className="h-56">
-                    <SuspectsLauncher />
+                    <SuspectsLauncher/>
                   </div>
                   <div className="h-56">
-                    <TimelineLauncher />
+                    <EvidenceLauncher/>
                   </div>
                   <div className="h-56">
-                    <AccusationLauncher />
+                    <AccusationLauncher/>
                   </div>
                 </div>
               </section>

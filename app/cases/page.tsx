@@ -270,7 +270,7 @@ function CaseCard({ case_: c }: { case_: CaseData }) {
                 style={{ transform: "translate(3px, 3px)" }}
               />
               <span
-                className="relative z-10 flex items-center gap-3 px-7 py-3 border border-[var(--color-red)] bg-transparent transition-all duration-300 group-hover/btn:bg-[var(--color-red)] group-hover/btn:bg-opacity-10"
+                className="relative z-10 flex items-center gap-3 px-7 py-3 border border-[var(--color-red)] bg-transparent transition-all duration-300 hover:border-[var(--color-red)] hover:text-[var(--color-red)] "
               >
                 <span className="font-display text-base tracking-[0.3em] text-[var(--color-red)] transition-colors duration-300">
                   SOLVE THE MYSTERY

@@ -18,12 +18,12 @@ export default function StartButton() {
       />
       {/* Button body */}
       <span
-        className="relative z-10 flex items-center gap-4 px-10 py-4 bg-transparent border border-[var(--color-gold)] transition-all duration-300 group-hover:bg-[var(--color-gold)] group-hover:bg-opacity-10"
+        className="relative z-10 flex items-center gap-4 px-10 py-4 bg-transparent border border-[var(--color-gold)] transition-all duration-300 hover:border-[var(--color-gold)] hover:text-[var(--color-black)]"
         style={{ borderColor: "var(--color-gold)" }}
       >
         {/* Arrow indicator */}
         <span className="w-6 h-px bg-[var(--color-gold)] transition-all duration-300 group-hover:w-8" />
-        <span className="font-display text-xl tracking-[0.35em] text-[var(--color-gold)] transition-colors duration-300">
+        <span className="font-display text-xl tracking-[0.35em] text-[var(--color-cream)] transition-colors duration-300">
           START INVESTIGATION
         </span>
         <span className="w-6 h-px bg-[var(--color-gold)] transition-all duration-300 group-hover:w-8" />
