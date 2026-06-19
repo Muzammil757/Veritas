@@ -218,6 +218,30 @@ export default function CasePage() {
     ],
   };
 
+  const questionRequirements: Record<string, Record<string, number>> = {
+    marcus: {
+      "What was Samuel working on before he died?": 3,
+      "Did you notice anything unusual that night?": 2,
+    },
+    lena: {
+      "Tell me about your whereabouts after the performance.": 2,
+      "What can you tell me about Samuel's next composition before he died?": 3,
+    },
+    vincent: {
+      "Why do you think police believed it was a robbery?": 3,
+    },
+    grace: {
+      "Tell me about the production of the composition - 'Midnight Blue'.": 3,
+    },
+  };
+
+  function isQuestionUnlocked(suspectId: number, question: string) {
+    const key = suspectId === 1 ? "marcus" : suspectId === 2 ? "lena" : suspectId === 3 ? "vincent" : "grace";
+    const requiredEvidenceId = questionRequirements[key]?.[question];
+
+    return requiredEvidenceId == null || reviewedEvidenceIds.includes(requiredEvidenceId);
+  }
+
   const suspectResponses: Record<string, Record<string, string>> = {
     marcus: {
       "How close were you and Samuel, really?":
@@ -590,16 +614,42 @@ function handleSuggestedQuestion(question: string) {
                           <div className="space-y-2">
                             {(() => {
                               const key = selectedSuspect?.id === 1 ? "marcus" : selectedSuspect?.id === 2 ? "lena" : selectedSuspect?.id === 3 ? "vincent" : "grace";
-                              return suspectQuestions[key].map((question) => (
-                                <button
-                                  key={question}
-                                  type="button"
-                                  onClick={() => handleSuggestedQuestion(question)}
-                                  className="w-full text-left px-3 py-2 rounded-sm border border-[rgba(184,146,58,0.12)] bg-[rgba(14,10,8,0.9)] text-[var(--color-parchment)] font-mono text-[0.82rem] hover:border-[var(--color-gold)]"
-                                >
-                                  {question}
-                                </button>
-                              ));
+                              const unlockedQuestions = suspectQuestions[key].filter((question) =>
+  isQuestionUnlocked(selectedSuspect?.id ?? 1, question)
+);
+
+const lockedQuestions = suspectQuestions[key].filter(
+  (question) => !isQuestionUnlocked(selectedSuspect?.id ?? 1, question)
+);
+
+return [...unlockedQuestions, ...lockedQuestions].map((question) => {
+  const unlocked = isQuestionUnlocked(selectedSuspect?.id ?? 1, question);
+
+  return (
+    <button
+      key={question}
+      type="button"
+      disabled={!unlocked}
+      onClick={() => {
+        if (!unlocked) return;
+        handleSuggestedQuestion(question);
+      }}
+      className={`w-full text-left px-3 py-2 rounded-sm border transition-all duration-300 ${
+        unlocked
+          ? "border-[rgba(184,146,58,0.35)] bg-[rgba(14,10,8,0.75)] text-[var(--color-cream)] hover:border-[var(--color-gold)]"
+          : "border-[rgba(184,146,58,0.12)] bg-[rgba(14,10,8,0.35)] text-[rgba(225,216,197,0.35)] cursor-not-allowed opacity-60"
+      }`}
+    >
+      <span>{question}</span>
+
+      {!unlocked && (
+        <span className="mt-2 block text-[0.65rem] uppercase tracking-[0.16em] text-[rgba(198,157,64,0.65)]">
+          &#128274; LOCKED - REVIEW EVIDENCE
+        </span>
+      )}
+    </button>
+  );
+});
                             })()}
                           </div>
                         </div>
