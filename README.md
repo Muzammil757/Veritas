@@ -1,6 +1,6 @@
 # VERITAS
 
-🔗 Live Demo: [Add Vercel Link Here]
+🔗 Live Demo: https://veritas-eight-virid.vercel.app/
 
 ## Overview
 
