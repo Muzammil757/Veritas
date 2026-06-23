@@ -18,6 +18,18 @@ Players examine evidence, question suspects, uncover hidden connections, and mak
 - Timeline analysis
 - Final accusation system
 
+## Screenshots
+
+### Landing Page
+![Landing Page](screenshots/landing-page.png)
+
+### Cases
+![Cases](screenshots/cases.png)
+
+### Interrogation Panel
+![Interrogation-panel](screenshots/interrogation-panel.png)
+
+
 ## Tech Stack
 
 - Next.js
